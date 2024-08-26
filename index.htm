@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<title>Free LogoMaker</title>
+<meta charset=UTF-8>
+<meta name=viewport content='width=device-width'>
+<style>
+@font-face{font-family:"Architects";src:url(fonts/architects.ttf);}/*Architects Daughter*/
+@font-face{font-family:"Montserrat";src:url(fonts/montserrat.ttf);}
+@font-face{font-family:"Poppins";src:url(fonts/poppins.ttf);}
+@font-face{font-family:"RobotoMono";src:url(fonts/roboto.ttf);}/*Roboto Mono*/
+@font-face{font-family:"Rubik";src:url(fonts/rubik.ttf);}
+@font-face{font-family:"Secular";src:url(fonts/secular.ttf);}/*Secular One*/
+</style>
+<body style='background-color:#e1e1e1; margin:0px; height:100vh; display:flex; align-items:center; justify-content:center;'></body>
+<script>
+function pickOne(a){return a[parseInt(Math.random()*a.length)];}
+function inicio(){document.body.innerHTML="<div style='background-color:#cccccc; border:1px solid #777777; padding:12px 10px 16px 10px; border-radius:4px; text-align:right;'><input style='width:200px; padding:12px; border:1px solid #777777; margin-bottom:16px; background-color:#ffffff;' id=nome value=\""+localStorage.getItem("nome")+"\"><br><a onclick='geraStilo(false,false,false,false);' style='background-color:#b8b8b8; text-decoration:none; border-radius:4px; padding:7px 14px; color:#222222; border:1px solid #555555; cursor:pointer;'>estilizar</a></div>";}
+function geraStilo(cor,fonte,frame,icone){
+    if(document.getElementById('nome'))localStorage.setItem("nome",document.getElementById('nome').value);
+
+    if(cor){
+        if(Math.random()>.5){
+            localStorage.setItem("fontcolor",true);
+            localStorage.setItem("bgcolor",hclara[3+parseInt(Math.random()*13)]+hexas[parseInt(Math.random()*16)]+hclara[3+parseInt(Math.random()*13)]+hexas[parseInt(Math.random()*16)]+hclara[3+parseInt(Math.random()*13)]+hexas[parseInt(Math.random()*16)]);
+        }else{
+            localStorage.setItem("fontcolor",false);
+            localStorage.setItem("bgcolor",hescura[parseInt(Math.random()*13)]+hexas[parseInt(Math.random()*16)]+hescura[parseInt(Math.random()*13)]+hexas[parseInt(Math.random()*16)]+hescura[parseInt(Math.random()*13)]+hexas[parseInt(Math.random()*16)]);
+        }
+    }
+
+    if(fonte){
+        localStorage.setItem("font-family",pickOne(["Architects","Montserrat","Poppins","RobotoMono","Rubik","Secular"]));
+        localStorage.setItem("font-size",pickOne([15,18,21,24,27,30,33]));
+        localStorage.setItem("text-transform",pickOne(["lowercase","uppercase","capitalize","none"]));
+    }
+
+    if(frame){
+        localStorage.setItem("border-radius",pickOne([3,6,9,12,15,18]));
+        localStorage.setItem("padding",pickOne([14,18,22,26,30,34,38]));
+        localStorage.setItem("frame-preenchido",Math.random()<.7);
+        localStorage.setItem("tracado-borda",Math.random()<.5);
+        localStorage.setItem("estilo-borda",pickOne(["solid","dashed"]));
+        localStorage.setItem("inclinacao",Math.random()>.8);
+        localStorage.setItem("angulo",pickOne(["346","353","7","14"]));
+    }
+
+    if(icone){
+        localStorage.setItem("logo",parseInt(Math.random()*38));
+        localStorage.setItem("logopos",parseInt(Math.random()*2));
+    }
+
+    bgcolor=localStorage.getItem("bgcolor");
+    fontcolor=localStorage.getItem("fontcolor");
+
+    quadro="\n<div style='";
+    quadro+="border-radius:"+localStorage.getItem("border-radius")+"px;";
+    quadro+=" padding:"+localStorage.getItem("padding")+"px;";
+    if(localStorage.getItem("frame-preenchido")=="true")
+        quadro+=" background-color:#"+ototom(bgcolor[0])+bgcolor[1]+ototom(bgcolor[2])+bgcolor[3]+ototom(bgcolor[4])+bgcolor[5]+";";
+    else if(localStorage.getItem("tracado-borda")=="true")
+        quadro+=" border:2px "+localStorage.getItem("estilo-borda")+" #"+(fontcolor=="true"?"222222":"dddddd")+";";
+    if(localStorage.getItem("inclinacao")=="true")
+        quadro+=" transform:rotate("+localStorage.getItem("angulo")+"deg);";
+
+    nome="\n<span style='";
+    nome+="color:#"+(fontcolor=="true"?"222222":"dddddd")+";";
+    nome+=" font-family:"+localStorage.getItem("font-family")+";";
+    nome+=" font-size:"+localStorage.getItem("font-size")+"px;";
+    nome+=" text-transform:"+localStorage.getItem("text-transform")+";";
+    nome+="'>"+localStorage.getItem("nome").replace(/\</g,'&lt;').replace(/\n/g,'<br>').replace(/  /g,' &nbsp;')+"</span>";
+
+    logo="\n<img src='"+(fontcolor=="true"?"iconesescuros":"iconesclaros")+"/"+localStorage.getItem("logo")+".svg'>";
+
+    if(localStorage.getItem("logopos")=='0')container=quadro+"'>"+logo+nome+"</div>";
+    else container=quadro+"'>"+nome+logo+"</div>";
+
+    container="<div style='padding:0px 34px; width:100%; height:100%; background-color:#"+bgcolor+"; display:flex; align-items:center; justify-content:center;'>"+container+"</div>";
+
+    font="https://fonts.google.com/specimen/";
+    switch(localStorage.getItem("font-family")){
+        case "Architects": font+="Architects+Daughter"; break;
+        case "Secular": font+="Secular+One"; break;
+        case "RobotoMono": font+="Roboto+Mono"; break;
+        default: font+=localStorage.getItem("font-family"); break;
+    }
+
+    botoes="<button style='position:fixed; bottom:58px;  height:30px; right:190px; width:56px;' onclick=\"geraStilo(true,true,true,true);\">outro</button>";
+    botoes+="<button style='position:fixed; bottom:58px; height:30px; right:132px; width:56px;' onclick=\"inicio();\">editar</button>";
+    botoes+="<button style='position:fixed; bottom:58px; height:30px; right:100px; width:30px;' onclick=\"geraStilo(true,false,false,false);\">c</button>";
+    botoes+="<button style='position:fixed; bottom:58px; height:30px; right:68px; width:30px;' onclick=\"geraStilo(false,true,false,false);\">t</button>";
+    botoes+="<button style='position:fixed; bottom:58px; height:30px; right:36px; width:30px;' onclick=\"geraStilo(false,false,true,false);\">f</button>";
+    botoes+="<button style='position:fixed; bottom:58px; height:30px; right:4px; width:30px;' onclick=\"geraStilo(false,false,false,true);\">i</button>";
+
+    document.body.innerHTML=container+"<textarea style='position:fixed; bottom:4px; right:4px; width: 230px; height:40px; background-color:#ffffff; padding:5px;'>"+container+"\n\n[font: "+font+"]</textarea>"+botoes;
+}
+hexas="0123456789abcdef";
+hclara="5567899abcddefff";
+hescura="00012234566789aa";
+function ototom(c){for(x=0;x<16;x++)if(c==hexas[x])return fontcolor=="true"?hclara[x]:hescura[x];}
+if(document.body.clientWidth>600){
+	if(localStorage.getItem("nome"))geraStilo(false,false,false,false);
+	else{
+		localStorage.setItem("nome","LogoMaker");
+		geraStilo(true,true,true,true);
+	}
+}else document.body.innerHTML="<div style='text-align:center; line-height:30px;'>Instale o aplicativo<br><a href=https://drive.google.com/file/d/1K5jVuLFJ4rTk917wF-rPXrVge-2vnMzq/view?usp=sharing style='color:#222299; text-decoration:none;'>ESTILO FRASE</a><br>para gerar logotipos</div>";
+</script>
+</html>
